@@ -623,7 +623,7 @@ app.get("*", function(req, res) {
 
 // DONT DELETE THIS
 
-server.listen(8080, function() {
+server.listen(process.env.PORT | 8080, function() {
     console.log("I'm listening.");
 });
 
@@ -740,16 +740,5 @@ io.on("connection", function(socket) {
         } catch (err) {
             console.log("err after db.getUserDetails in newPost: ", err);
         }
-        //do a db query to look up into about user
-        //we want to do a db query to store new chat message into chat table
-        //we want to build up a chat message object (that looks like chat messsage)
-        //objects we logged in getLasrTenChatMessages
-        //when we have done that, we want to wmit our message obj to everyone
     });
 });
-
-//command to search for the database: history | grep git
-//sudo service postgresql start
-//node bundle-server.js
-//git push final HEAD:master
-//npm audit fix

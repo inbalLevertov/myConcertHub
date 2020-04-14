@@ -19,5 +19,3 @@ export function Welcome() {
         </div>
     );
 }
-
-// <img src="/piano.png" id="piano" />

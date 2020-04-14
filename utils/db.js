@@ -1,8 +1,19 @@
 const spicedPg = require("spiced-pg");
-const db = spicedPg(
+let secrets;
+process.env.NODE_ENV === "production"
+    ? (secrets = process.env)
+    : (secrets = require("../secrets"));
+const dbUrl =
     process.env.DATABASE_URL ||
-        `postgres://postgres:postgres@localhost:5432/finalproject`
-);
+    `postgres:${secrets.dbUser}:${secrets.dbPassword}@localhost:5432/finalproject`;
+const db = spicedPg(dbUrl);
+
+///////
+// const spicedPg = require("spiced-pg");
+// const db = spicedPg(
+//     process.env.DATABASE_URL ||
+//         `postgres://postgres:postgres@localhost:5432/finalproject`
+// );
 
 exports.addRegister = function(first, last, email, password) {
     // console.log("addRegister is working");
