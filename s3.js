@@ -1,6 +1,15 @@
 const aws = require("aws-sdk");
 const fs = require("fs");
 
+// let secrets;
+// process.env.NODE_ENV === "production"
+//     ? (secrets = process.env)
+//     : (secrets = require("../secrets"));
+// const dbUrl =
+//     process.env.DATABASE_URL ||
+//     `postgres:${secrets.dbUser}:${secrets.dbPassword}@localhost:5432/finalproject`;
+// const db = spicedPg(dbUrl);
+////////
 let secrets;
 if (process.env.NODE_ENV == "production") {
     secrets = process.env; // in prod the secrets are environment variables
