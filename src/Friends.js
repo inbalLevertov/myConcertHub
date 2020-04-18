@@ -42,7 +42,7 @@ export function Friends() {
                         {!wannabes ||
                             (!wannabes.length && (
                                 <p id="try">
-                                    You have no friend requests at the moment{" "}
+                                    There are no friend requests at the moment{" "}
                                 </p>
                             ))}
                         {wannabes &&
