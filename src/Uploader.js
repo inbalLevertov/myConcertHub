@@ -35,14 +35,4 @@ export function Uploader({
             </div>
         </div>
     );
-
-    //some kinf of form that enables uplaoding an image like imageboard and then post it through axios post request
 }
-// function onClick = () => {};
-// return
-// <div> onClick={}
-
-////
-//
-// <input onChange={handleChange} id="file" type="file" name="file" accept="image/*">
-// <button onClick={handleClick}>submit</button>

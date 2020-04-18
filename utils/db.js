@@ -1,14 +1,3 @@
-// const spicedPg = require("spiced-pg");
-// let secrets;
-// process.env.NODE_ENV === "production"
-//     ? (secrets = process.env)
-//     : (secrets = require("../secrets"));
-// const dbUrl =
-//     process.env.DATABASE_URL ||
-//     `postgres:${secrets.dbUser}:${secrets.dbPassword}@localhost:5432/finalproject`;
-// const db = spicedPg(dbUrl);
-
-///////
 const spicedPg = require("spiced-pg");
 const db = spicedPg(
     process.env.DATABASE_URL ||
@@ -32,11 +21,6 @@ exports.getPass = function(email) {
 exports.compareEmail = function(email) {
     return db.query(`SELECT email FROM users WHERE email = $1`, [email]);
 };
-// exports.compareCode = function() {
-//     return db.query(
-//         `SELECT * FROM password_reset_codes WHERE CURRENT_TIMESTAMP - created_at < INTERVAL '10 minutes'`
-//     );
-// };
 
 exports.insertCode = function(email, code) {
     return db.query(
@@ -234,54 +218,3 @@ exports.insertVideo = function(filename, s3Url, id, title, description) {
         [s3Url + filename, id, title, description]
     );
 };
-
-// exports.insertURL = function(username, title, description, filename, s3Url) {
-//     return db.query(
-//         `INSERT INTO images (username, title, description, url)
-//     VALUES ($1, $2, $3, $4)
-//     RETURNING *`,
-//         [username, title, description, s3Url + filename]
-//     );
-// };
-
-// exports.insertCode = function(email, code) {
-//     return db.query(
-//         `INSERT INTO password_reset_codes (email, code)
-//       VALUES ($1, $2)
-//       RETURNING id`,
-//         [email, code]
-//     );
-// };
-
-// -- INSERT INTO messages (message_text, sender_id) VALUES (
-// --     'Welcome to Spiced and the Future! message no 1',
-// --     5
-// -- );
-
-// exports.renderFullProfile = function(userId) {
-//     return db.query(
-//         `SELECT users.first, users.last, users.email, user_profiles.age, user_profiles.city, user_profiles.url
-// FROM users
-// LEFT JOIN user_profiles
-//  ON user_profiles.user_id = users.id
-//  WHERE users.id = $1`,
-//         [userId]
-//     );
-// };
-
-// `UPDATE friendships SET accepted=true WHERE sender_id=$1 AND receiver_id=$2 OR WHERE sender_id=$2 AND receiver_id=$1
-// RETURNING id`,
-
-// `UPDATE users SET bio=$1 WHERE id=$2
-// RETURNING bio, id`,
-// [bio, id]
-
-// exports.updateNoPass = function(first, last, email, userId) {
-//     return db.query(
-//         `UPDATE users SET first=$1, last=$2, email=$3 WHERE id=$4`,
-//         [first, last, email, userId]
-//     );
-// };
-
-//SELECT * FROM my_table
-// WHERE CURRENT_TIMESTAMP - created_at < INTERVAL '10 minutes';

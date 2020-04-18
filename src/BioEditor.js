@@ -5,23 +5,16 @@ export class BioEditor extends React.Component {
     constructor(props) {
         super(props);
         this.state = {
-            // buttonAdd: true,
             bioAndEdit: true
         };
         this.showArea = this.showArea.bind(this);
         this.handleChange = this.handleChange.bind(this);
         this.saveBio = this.saveBio.bind(this);
     }
-    // componentDidMount() {
-    //     axios.get("/user").then(({ data }) => {
-    //         this.setState(data.details);
-    //         console.log("this.state after get /user: ", this.state);
-    //     });
-    // }
+
     showArea() {
         this.setState({
             textAreaAppear: true
-            // buttonAdd: false
         });
     }
 

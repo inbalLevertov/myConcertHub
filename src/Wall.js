@@ -6,12 +6,10 @@ import { posts, post, image, images } from "./actions";
 
 export function Wall({ otherUserId }) {
     const dispatch = useDispatch();
-    // const oldImages = useSelector(state => state && state.images);
     const newImage = useSelector(state => state && state.image);
     const [searchImages, setSearchImages] = useState({});
 
     const oldPosts = useSelector(
-        // state => state.friendsWannabes
         state =>
             state.posts &&
             state.posts.filter(
@@ -67,7 +65,6 @@ export function Wall({ otherUserId }) {
             ...searchImages,
             [e.target.name]: e.target.value
         });
-        // console.log("searchImages after useStatefulFields: ", searchImages);
     };
 
     return (

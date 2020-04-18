@@ -1,7 +1,7 @@
 const express = require("express");
 const app = express();
 const server = require("http").Server(app);
-const io = require("socket.io")(server, { origins: "localhost:8080" });
+const io = require("socket.io")(); //(server, { origins: "localhost:8080" });
 const compression = require("compression");
 const db = require("./utils/db");
 const cookieSession = require("cookie-session");
@@ -37,7 +37,6 @@ const uploader = multer({
     // }
 });
 
-// console.log(secretCode);
 // const { requireLoggedOutUser } = require("./utils/middleware");
 
 app.use(express.static("./public"));
@@ -113,32 +112,18 @@ app.post("/welcome", (req, res) => {
                     .then(response => {
                         req.session.userId = response.rows[0].id;
                         console.log("req.session.userId: ", req.session.userId);
-                        // })
-                        // .then(response => {
-                        // req.session.userId = response.rows[0].id;
-                        // console.log("req.session.userId: ", req.session.userId);
-                        // console.log("result from db.addRegister: ", result);
-                        // if (first && last && email && hashedPw) {
+
                         console.log("registration succeed");
                         res.sendStatus(200);
-                        // } else {
-                        //     console.log("error in filling out the forms");
-                        //     res.sendStatus(500);
-                        // }
                     })
                     .catch(err => {
                         console.log("error in filling out the forms: ", err);
                         res.json({ filledForms: false });
-                        // res.redirect("/");
                     });
-                // });
             })
             .catch(err => {
                 console.log("error in hashing the password: ", err);
                 res.json({ hashedPass: false });
-                // } else {
-                //     res.json("register", {
-                //         repeatPass: true
             });
     } else {
         console.log("error, passwords dont match: ");
@@ -158,15 +143,11 @@ app.post("/login", (req, res) => {
     req.session.first = first;
     req.session.last = last;
     const { email, password } = req.body;
-    // if (email === "") {
-    //     console.log("no email address");
-    //     res.json({ email: false });
-    // }
+
     db.getPass(email)
         .then(response => {
             req.session.userId = response.rows[0].id;
             const hashedPwInDb = response.rows[0].password;
-            // console.log("hashedPwInDb: ", hashedPwInDb);
             compare(password, hashedPwInDb)
                 .then(matchValue => {
                     if (matchValue) {
@@ -188,13 +169,6 @@ app.post("/login", (req, res) => {
             });
         });
 });
-
-// app.get("/password/reset/start", (req, res) => {
-//     if (req.session.userId) {
-//         res.redirect("/");
-//     }
-//     res.sendFile(__dirname + "/index.html");
-// });
 
 app.post("/password/reset/start", (req, res) => {
     const { email } = req.body;
@@ -236,14 +210,10 @@ app.post("/upload", uploader.single("file"), s3.upload, (req, res) => {
             .catch(err => {
                 console.log("err in db.insertURL: ", err);
             });
-        // let url = amazonURL + filename;
-        // console.log("url: ", url);
-        // res.json({ url: url });
     }
 });
 app.post("/uploadImage", uploader.single("file"), s3.upload, (req, res) => {
     const { filename } = req.file;
-    // console.log("filename: ", filename);
     if (req.file) {
         db.insertURL(filename, amazonURL, req.session.userId)
             .then(result => {
@@ -253,9 +223,6 @@ app.post("/uploadImage", uploader.single("file"), s3.upload, (req, res) => {
             .catch(err => {
                 console.log("err in db.insertURL: ", err);
             });
-        // let url = amazonURL + filename;
-        // console.log("url: ", url);
-        // res.json({ url: url });
     }
 });
 
@@ -263,7 +230,6 @@ app.post("/password/reset/verify", (req, res) => {
     const { code, password, email } = req.body;
     db.getCode(email)
         .then(result => {
-            // console.log("result.rows: ", result.rows);
             let secondCode = result.rows[result.rows.length - 1].code;
             console.log(
                 "secondCode (code sent and allready in database): ",
@@ -273,7 +239,6 @@ app.post("/password/reset/verify", (req, res) => {
                 console.log("codes are equal, the new password is: ", password);
                 hash(password)
                     .then(hashedPw => {
-                        // console.log("new hashed pw and id: ", hashedPw, email);
                         db.updatePass(hashedPw, email)
                             .then(result => {
                                 console.log(
@@ -317,7 +282,6 @@ app.get("/user", (req, res) => {
     }
     let id = req.session.userId;
     db.getUserDetails(id).then(result => {
-        // console.log("result from getUserDetails: ", result[0]);
         let details = result[0];
         res.json({ details });
     });
@@ -328,12 +292,9 @@ app.post("/bio", (req, res) => {
     let id = req.session.userId;
     console.log("bio: ", bio);
     db.insertBio(bio, id).then(result => {
-        // console.log("result after db.insertBio: ", result.rows[0].bio);
         let newBio = result.rows[0].bio;
         res.json({ newBio, insertBio: true });
     });
-    // db.getCode(email)
-    //     .then(result => {
 });
 
 app.get("/user/:id.json", (req, res) => {
@@ -346,10 +307,6 @@ app.get("/user/:id.json", (req, res) => {
     console.log("this is req.params.id: ", id);
     db.getUserDetails(id)
         .then(result => {
-            // console.log(
-            //     "result from db.getUserDetails after /user/:id.json: ",
-            //     result
-            // );
             res.json({
                 result
             });
@@ -365,7 +322,6 @@ app.get("/user/:id.json", (req, res) => {
 app.get("/users.json", async (req, res) => {
     try {
         const result = await db.getLastUsers();
-        // console.log("result after db.getLastUsers: ", result);
         res.json({ result });
     } catch (err) {
         console.log("err after db.getLastUsers: ", err.message);
@@ -373,16 +329,13 @@ app.get("/users.json", async (req, res) => {
 });
 
 app.post("/searching", (req, res) => {
-    // console.log(req.body);
     let { searchUsers } = req.body;
     if (!searchUsers) {
         res.redirect("/users.json");
         return;
     }
-    // console.log("searchUsers: ", searchUsers);
     db.getMatchingUsers(searchUsers)
         .then(result => {
-            // console.log("result after db.getMatchingUsers: ", result);
             res.json({ result });
         })
         .catch(err => {
@@ -394,12 +347,7 @@ app.get("/initial-friendship-status/:id", async (req, res) => {
     try {
         let receiverId = req.params.id;
         let userId = req.session.userId;
-        // console.log("receiverId: ", receiverId, "userId ", userId);
         const result = await db.checkRelationship(userId, receiverId);
-        // console.log("result after db.checkRelationship: ", result);
-        // if (!result[0]) {
-        //     res.json({ buttonText: "Make Friend Request" });
-        // } else
         if (result[0].accepted == true) {
             res.json({ buttonText: "End Friendship", wall: true });
         } else if (result[0].receiver_id == userId) {
@@ -433,9 +381,7 @@ app.post("/cancel-friend-request", async (req, res) => {
     try {
         let otherUserId = req.body.otherUserId;
         let userId = req.session.userId;
-        // console.log("otherUserId: ", otherUserId, "userId ", userId);
         const result = await db.deleteRelationship(userId, otherUserId);
-        // console.log("result after db.deleteRelationship: ", result);
         res.json({ buttonText: "Make Friend Request" });
     } catch (err) {
         console.log("err after db.deleteRelationship: ", err.message);
@@ -443,14 +389,10 @@ app.post("/cancel-friend-request", async (req, res) => {
 });
 
 app.post("/accept-friend-request", async (req, res) => {
-    console.log("req.bosy after /accept friend request: ", req.body);
     try {
-        // console.log("req.body.otherUserId: ", req.body.otherUserId);
         let otherUserId = req.body.otherUserId;
         let userId = req.session.userId;
-        // console.log("otherUserId: ", otherUserId, "userId ", userId);
         const result = await db.updateRelationship(userId, otherUserId);
-        console.log("result after db.updateRelationship: ", result);
         res.json({ buttonText: "End Friendship", result: result });
     } catch (err) {
         console.log("err after db.updateRelationship: ", err.message);
@@ -462,9 +404,7 @@ app.post("/end-friendship", async (req, res) => {
     try {
         let otherUserId = req.body.otherUserId;
         let userId = req.session.userId;
-        // console.log("otherUserId: ", otherUserId, "userId ", userId);
         const result = await db.deleteRelationship(userId, otherUserId);
-        // console.log("result after db.deleteRelationship: ", result);
         res.json({ buttonText: "Make Friend Request" });
     } catch (err) {
         console.log("err after db.deleteRelationship: ", err.message);
@@ -473,21 +413,11 @@ app.post("/end-friendship", async (req, res) => {
 
 app.get("/friends-wannabes", async (req, res) => {
     try {
-        // let receiverId = req.params.id;
         let userId = req.session.userId;
-        // console.log("receiverId: ", receiverId, "userId ", userId);
         const result = await db.manageFriendship(userId);
         console.log("result after db.manageFriendship: ", result);
         res.json(result);
-        // if (result[0].accepted == true) {
-        //     res.json({ buttonText: "End Friendship" });
-        // } else if (result[0].receiver_id == userId) {
-        //     res.json({ buttonText: "Accept Friend Request" });
-        // } else if (result[0].receiver_id !== userId) {
-        //     res.json({ buttonText: "Cancel Friend Request" });
-        // }
     } catch (err) {
-        // res.json({ buttonText: "Make Friend Request" });
         console.log("err after db.manageFriendship: ", err.message);
     }
 });
@@ -498,13 +428,10 @@ app.get("/userId", (req, res) => {
 });
 app.get("/signOut", (req, res) => {
     req.session.userId = null;
-    // res.json({ signOut: "succeed" });
     res.redirect("/welcome");
 });
 
 app.post("/addVideo", uploader.single("file"), s3.upload, async (req, res) => {
-    // console.log("req.body after post addVideo: ", req.file);
-    // console.log("req.body: ", req.body);
     const { title, description } = req.body;
     const { filename } = req.file;
     //
@@ -517,15 +444,11 @@ app.post("/addVideo", uploader.single("file"), s3.upload, async (req, res) => {
             description
         );
 
-        // console.log("result after db.insertVideo: ", result);
         const date = result.rows[0].created_at;
         const video = result.rows[0].video;
         const id = result.rows[0].id;
-        // console.log("date: ", date);
         const dateAsString = date.toString();
-        // console.log("dateAsString: ", dateAsString);
         const shortDate = dateAsString.slice(0, 21);
-        console.log("shortDate: ", shortDate);
         const newVideo = {
             id: id,
             video: video,
@@ -534,12 +457,7 @@ app.post("/addVideo", uploader.single("file"), s3.upload, async (req, res) => {
             description: description,
             created_at: shortDate
         };
-        console.log("newVideo: ", newVideo);
         res.json(newVideo);
-
-        // .catch(err => {
-        //     console.log("error in insertURL: ", err);
-        // });
     }
 });
 app.post("/addImage", uploader.single("file"), s3.upload, async (req, res) => {
@@ -556,16 +474,11 @@ app.post("/addImage", uploader.single("file"), s3.upload, async (req, res) => {
             receiverId
         );
 
-        // console.log("result after db.insertImage: ", result);
         const date = result.rows[0].created_at;
         const image = result.rows[0].image;
         const id = result.rows[0].id;
-        // const description = result.rows[0].description;
-        console.log("image: ", image);
         const dateAsString = date.toString();
-        // console.log("dateAsString: ", dateAsString);
         const shortDate = dateAsString.slice(0, 21);
-        // console.log("shortDate: ", shortDate);
         const newImage = {
             id: id,
             image: image,
@@ -574,25 +487,16 @@ app.post("/addImage", uploader.single("file"), s3.upload, async (req, res) => {
             created_at: shortDate,
             receiver_id: receiverId
         };
-        console.log("newImage: ", newImage);
         res.json(newImage);
-
-        // .catch(err => {
-        //     console.log("error in insertURL: ", err);
-        // });
     }
 });
 
 app.get("/receiveImages", async (req, res) => {
     const data = await db.getLastImages();
-    // console.log("data.rows after db.getLastImages: ", data.rows);
     data.rows.forEach(x => {
         let date = x.created_at;
-        // console.log("date: ", date);
         let dateAsString = date.toString();
-        // console.log("dateAsString: ", dateAsString);
         let shortDate = dateAsString.slice(0, 21);
-        // console.log("shortDate ", shortDate);
         x.created_at = shortDate;
     });
     res.json(data.rows);
@@ -600,14 +504,10 @@ app.get("/receiveImages", async (req, res) => {
 
 app.get("/receiveVideos", async (req, res) => {
     const data = await db.getLastVideos();
-    // console.log("data.rows after db.getLastVideos: ", data.rows);
     data.rows.forEach(x => {
         let date = x.created_at;
-        // console.log("date: ", date);
         let dateAsString = date.toString();
-        // console.log("dateAsString: ", dateAsString);
         let shortDate = dateAsString.slice(0, 21);
-        // console.log("shortDate ", shortDate);
         x.created_at = shortDate;
     });
     res.json(data.rows);
@@ -651,15 +551,7 @@ io.on("connection", function(socket) {
         console.log(`a socket with the id ${socket.id} just disconnected`);
     });
 
-    /* ... */
-
-    //new table for last messaged
-
-    //get getLasrTenChatMessages probably needs to use a JOIN
-    //join users and chats...
-
     db.getLastTenChatMessages().then(data => {
-        // console.log("data.rows: ", data.rows.first);
         data.rows.forEach(x => {
             let date = x.created_at;
             // console.log("date: ", date);
@@ -675,14 +567,10 @@ io.on("connection", function(socket) {
     });
 
     db.getLastTenPosts().then(data => {
-        // console.log("data.rows after getLastTenPosts: ", data.rows);
         data.rows.forEach(x => {
             let date = x.created_at;
-            // console.log("date: ", date);
             let dateAsString = date.toString();
-            // console.log("dateAsString: ", dateAsString);
             let shortDate = dateAsString.slice(0, 21);
-            // console.log("shortDate ", shortDate);
             x.created_at = shortDate;
         });
         io.sockets.emit("posts", data.rows);
@@ -692,14 +580,10 @@ io.on("connection", function(socket) {
         try {
             const result = await db.getUserDetails(userId);
             const { first, last, url } = result[0];
-            // console.log("first: ", first, "last: ", last, "url: ", url);
             const data = await db.insertNewChatMessage(newMsg, userId);
             const date = data.rows[0].created_at;
-            // console.log("date: ", date);
             const dateAsString = date.toString();
-            // console.log("dateAsString: ", dateAsString);
             const shortDate = dateAsString.slice(0, 21);
-            // console.log("shortDate: ", shortDate);
             const chatMessage = {
                 first: first,
                 last: last,
@@ -717,17 +601,12 @@ io.on("connection", function(socket) {
         try {
             const result = await db.getUserDetails(userId);
             const { first, last, url } = result[0];
-            // console.log("newMsg with receiverId? ", newMsg);
             const msg = newMsg.value;
             const receiverId = newMsg.otherUserId.otherUserId;
-            // console.log("msg: ", msg, "receiverId: ", receiverId);
-            // console.log("first: ", first, "last: ", last, "url: ", url);
             const data = await db.insertNewPost(msg, userId, receiverId);
             const date = data.rows[0].created_at;
             const dateAsString = date.toString();
-            // console.log("dateAsString: ", dateAsString);
             const shortDate = dateAsString.slice(0, 21);
-            // console.log("date:", date);
             const post = {
                 first: first,
                 last: last,

@@ -10,7 +10,6 @@ import { FindPeople } from "./FindPeople";
 import { Friends } from "./Friends";
 import { Header } from "./Header";
 import { BrowserRouter, Route } from "react-router-dom";
-// import { BioEditor } from "./BioEditor";
 
 export class App extends React.Component {
     constructor(props) {

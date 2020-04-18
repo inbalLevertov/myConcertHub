@@ -1,7 +1,6 @@
 import React, { useEffect, useRef, useState } from "react";
 import { socket } from "./socket";
 import { useSelector, useDispatch } from "react-redux";
-// import { ConcertHall } from "./ConcertHall";
 import { video, videos } from "./actions";
 
 export function Chat() {
@@ -9,7 +8,6 @@ export function Chat() {
     const chatMessages = useSelector(state => state && state.chatMessages);
     const oldVideos = useSelector(state => state && state.videos);
     const newVideo = useSelector(state => state && state.video);
-    // console.log("here are my last 10 chat messages");
     const [searchVideos, setSearchVideos] = useState({});
     const [error, setError] = useState();
 
@@ -44,19 +42,14 @@ export function Chat() {
     };
 
     const useStatefulFields = e => {
-        // console.log("e.target.name: ", e.target.name);
-        // console.log("e.target.value: ", e.target.value);
-
         setSearchVideos({
             ...searchVideos,
             [e.target.name]: e.target.value
         });
-        console.log("searchVideos after useStatefulFields: ", searchVideos);
     };
 
     const handleClick = e => {
         e.preventDefault();
-        console.log("searchVideos.file.type: ", searchVideos.file.type);
         if (
             searchVideos.file.type != "video/mp4" &&
             searchVideos.file.type != "video/quicktime"
@@ -65,12 +58,10 @@ export function Chat() {
             setError({ error: true });
             return;
         } else {
-            // console.log("e.target.value: ", e.target.value);
             var formData = new FormData();
             formData.append("file", searchVideos.file);
             formData.append("title", searchVideos.title);
             formData.append("description", searchVideos.description);
-            console.log("formData: ", formData);
             dispatch(video(formData));
         }
     };

@@ -3,14 +3,12 @@ import axios from "./axioscopy";
 import { Link } from "react-router-dom";
 
 export function FindPeople() {
-    // let first, last, url, id;
     const [users, setUsers] = useState();
     const [searchUsers, setSearchUsers] = useState();
     const [data, setData] = useState();
 
     useEffect(() => {
         console.log("useEffect is running");
-        // return () => {
         axios
             .get("/users.json")
             .then(({ data }) => {
@@ -25,9 +23,6 @@ export function FindPeople() {
 
     useEffect(() => {
         console.log("searchUsers is running");
-        // if (searchUsers) {
-        // }
-        // let searched = setUsers(e.target.value);
         axios
             .post("/searching", { searchUsers })
             .then(({ data }) => {

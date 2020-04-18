@@ -33,13 +33,6 @@ export function Friends() {
         return null;
     }
 
-    // const acceptFriend = e => {
-    //     // console.log("e.target: ", e.target);
-    //     // if (e.target == "<button>Accept Friend Request</button>") {
-    //     //     console.log("this works");
-    //     // }
-    // };
-
     return (
         <div>
             <div id="wannabesContainer">

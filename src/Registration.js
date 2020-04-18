@@ -11,12 +11,9 @@ export class Registration extends React.Component {
     }
 
     handleChange(e) {
-        // console.log("handleChange running");
-        // console.log("e.target.value: ", e.target.value);
         this.setState({
             [e.target.name]: e.target.value
         });
-        console.log("this.state: ", this.state);
     }
 
     handleSubmit(e) {

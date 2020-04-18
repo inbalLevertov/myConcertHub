@@ -1,7 +1,3 @@
-// export default function(state = {}, action) {
-//     return state;
-// }
-
 export default function(state = {}, action) {
     if (action.type == "RECEIVE_FRIENDS_WANNABES") {
         state = {
