@@ -84,14 +84,15 @@ export function Friends() {
                         {friends &&
                             friends.map(user => (
                                 <div className="chosenList" key={user.id}>
-                                    <img
-                                        className="imageInList"
-                                        src={user.url || "/default.jpg"}
-                                        alt={`${user.first} ${user.last}`}
-                                    />
                                     <Link to={`/user/${user.id}`}>
+                                        <img
+                                            className="imageInList"
+                                            src={user.url || "/default.jpg"}
+                                            alt={`${user.first} ${user.last}`}
+                                        />
                                         {user.first} {user.last}
                                     </Link>
+
                                     <button
                                         className="friendshipBtn"
                                         onClick={() =>
